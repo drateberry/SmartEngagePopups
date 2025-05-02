@@ -69,7 +69,9 @@ class SmartEngage_Popups_Public {
         wp_localize_script($this->plugin_name, 'smartengagePopups', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'pageViews' => $this->increment_page_view_count(),
-            'globalFrequency' => get_option('smartengage_global_frequency_limit', 'session')
+            'globalFrequency' => get_option('smartengage_global_frequency_limit', 'session'),
+            'zIndex' => get_option('smartengage_popup_z_index', 999999),
+            'debug' => (defined('WP_DEBUG') && WP_DEBUG) || (isset($_GET['smartengage_debug']) && $_GET['smartengage_debug'] == 1)
         ));
     }
     

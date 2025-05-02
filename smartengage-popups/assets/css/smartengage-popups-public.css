@@ -17,7 +17,13 @@
   overflow: hidden;
   visibility: hidden;
   opacity: 0;
+  pointer-events: none; /* Prevent clicks when hidden */
   transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Special handling for inactive popups */
+.smartengage-popup-container.popup-inactive {
+  display: none !important;
 }
 
 .smartengage-popup-container.active {

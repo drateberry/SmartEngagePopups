@@ -75,8 +75,28 @@ class SmartEngage_Popups_Display {
             $trigger_value = get_post_meta($popup->ID, '_popup_trigger_value', true) ?: '5';
             
             // Output popup container
+            // Additional data attributes for targeting and debugging
+            $frequency = get_post_meta($popup->ID, '_popup_frequency', true) ?: 'session';
+            $frequency_value = get_post_meta($popup->ID, '_popup_frequency_value', true) ?: '1';
+            $device_target = get_post_meta($popup->ID, '_popup_device_target', true) ?: 'all';
+            
+            // Add CSS class based on popup status
+            $popup_status_class = '';
+            $popup_status = get_post_meta($popup->ID, '_popup_status', true);
+            if ($popup_status === 'inactive') {
+                $popup_status_class = 'popup-inactive';
+            }
             ?>
-            <div id="smartengage-popup-<?php echo esc_attr($popup->ID); ?>" class="smartengage-popup-container theme-<?php echo esc_attr($popup_theme); ?>" data-popup-id="<?php echo esc_attr($popup->ID); ?>" data-trigger-type="<?php echo esc_attr($trigger_type); ?>" data-trigger-value="<?php echo esc_attr($trigger_value); ?>" style="z-index: <?php echo esc_attr($z_index); ?>;">
+            <div id="smartengage-popup-<?php echo esc_attr($popup->ID); ?>" 
+                class="smartengage-popup-container theme-<?php echo esc_attr($popup_theme); ?> <?php echo esc_attr($popup_status_class); ?>"
+                data-popup-id="<?php echo esc_attr($popup->ID); ?>"
+                data-trigger-type="<?php echo esc_attr($trigger_type); ?>"
+                data-trigger-value="<?php echo esc_attr($trigger_value); ?>"
+                data-frequency="<?php echo esc_attr($frequency); ?>"
+                data-frequency-value="<?php echo esc_attr($frequency_value); ?>"
+                data-device-target="<?php echo esc_attr($device_target); ?>"
+                style="z-index: <?php echo esc_attr($z_index); ?>;">
+                
                 <div class="smartengage-popup-overlay"></div>
                 <div class="smartengage-popup type-<?php echo esc_attr($popup_type); ?> position-<?php echo esc_attr($popup_position); ?>">
                     <button class="smartengage-popup-close" aria-label="<?php esc_attr_e('Close', 'smartengage-popups'); ?>">&times;</button>

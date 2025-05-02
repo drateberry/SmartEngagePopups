@@ -1,6 +1,6 @@
 /**
  * Frontend JavaScript for SmartEngage Popups
- * Handles popup display, triggers, and interactions
+ * Handles popup display, triggers, and interactions with improved z-index handling
  */
 (function($) {
     'use strict';
@@ -152,6 +152,9 @@
                 return;
             }
             
+            // Double-check z-index to ensure it's on top
+            this.ensureZIndexOnTop(popup.$element);
+            
             // Mark as displayed
             popup.displayed = true;
             this.displayedPopups.push(popup.id);
@@ -161,6 +164,43 @@
             
             // Record the view
             this.recordPopupView(popup.id);
+        }
+        
+        /**
+         * Ensure the popup has a higher z-index than any other element on the page
+         * This helps troubleshoot issues with popups being hidden behind other elements
+         * 
+         * @param {jQuery} $element The popup element
+         */
+        ensureZIndexOnTop($element) {
+            // Get current z-index
+            let zIndex = parseInt($element.css('z-index'));
+            
+            // If it's not a number or less than our minimum, use configured z-index or default
+            if (isNaN(zIndex) || zIndex < 100) {
+                zIndex = window.smartengagePopups && window.smartengagePopups.zIndex ? 
+                    parseInt(window.smartengagePopups.zIndex) : 999999;
+            }
+            
+            // Ensure popup overlay has proper z-index
+            const $overlay = $element.find('.smartengage-popup-overlay');
+            if ($overlay.length) {
+                $overlay.css('z-index', 1);
+            }
+            
+            // Ensure popup content has proper z-index
+            const $popup = $element.find('.smartengage-popup');
+            if ($popup.length) {
+                $popup.css('z-index', 2);
+            }
+            
+            // Apply the z-index to the container
+            $element.css('z-index', zIndex);
+            
+            // Debug z-index issues - log to console if enabled
+            if (window.smartengagePopups && window.smartengagePopups.debug) {
+                console.log('SmartEngage Popups: Setting z-index to ' + zIndex + ' for popup #' + $element.attr('id'));
+            }
         }
 
         /**

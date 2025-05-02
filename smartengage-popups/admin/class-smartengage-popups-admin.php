@@ -457,8 +457,9 @@ class SmartEngage_Popups_Admin {
                         <tr valign="top">
                             <th scope="row"><?php _e('Popup Z-Index', 'smartengage-popups'); ?></th>
                             <td>
-                                <input type="number" name="popup_z_index" value="<?php echo esc_attr($popup_z_index); ?>" min="1" />
-                                <p class="description"><?php _e('Set the z-index value for popups. Increase this if popups appear behind other elements.', 'smartengage-popups'); ?></p>
+                                <input type="number" name="popup_z_index" value="<?php echo esc_attr($popup_z_index); ?>" min="1" max="2147483647" />
+                                <p class="description"><?php _e('Set the z-index value for popups. Default is 999999. Increase this if popups appear behind other elements on your site.', 'smartengage-popups'); ?></p>
+                                <p class="description" style="color:#d63638;"><?php _e('If your popups are not displaying, try increasing this value to 9999999 or higher.', 'smartengage-popups'); ?></p>
                             </td>
                         </tr>
                         
