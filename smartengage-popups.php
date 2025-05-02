@@ -24,41 +24,4 @@ define( 'SMARTENGAGE_POPUPS_VERSION', '1.0.0' );
 define( 'SMARTENGAGE_POPUPS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SMARTENGAGE_POPUPS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
-/**
- * The code that runs during plugin activation.
- */
-function activate_smartengage_popups() {
-    require_once SMARTENGAGE_POPUPS_PLUGIN_DIR . 'includes/class-smartengage-popups-post-type.php';
-    $post_type = new SmartEngage_Popups_Post_Type();
-    $post_type->register_post_type();
-    flush_rewrite_rules();
-
-    // Create analytics table
-    require_once SMARTENGAGE_POPUPS_PLUGIN_DIR . 'includes/class-smartengage-popups-analytics.php';
-    $analytics = new SmartEngage_Popups_Analytics();
-    $analytics->create_tables();
-}
-
-/**
- * The code that runs during plugin deactivation.
- */
-function deactivate_smartengage_popups() {
-    flush_rewrite_rules();
-}
-
-register_activation_hook( __FILE__, 'activate_smartengage_popups' );
-register_deactivation_hook( __FILE__, 'deactivate_smartengage_popups' );
-
-/**
- * The core plugin class.
- */
-require SMARTENGAGE_POPUPS_PLUGIN_DIR . 'includes/class-smartengage-popups.php';
-
-/**
- * Begins execution of the plugin.
- */
-function run_smartengage_popups() {
-    $plugin = new SmartEngage_Popups();
-    $plugin->run();
-}
-run_smartengage_popups();
+include_once('smartengage-popups/smartengage-popups.php');
