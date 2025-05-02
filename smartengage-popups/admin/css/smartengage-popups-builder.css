@@ -1,0 +1,552 @@
+/**
+ * Enhanced CSS styles for SmartEngage Popups drag-and-drop builder
+ * Modern, clean design with improved user experience
+ */
+
+/* Builder container */
+.smartengage-builder-wrap {
+    display: flex;
+    margin: 20px 0;
+    min-height: 650px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+/* Elements palette - improved styling */
+.smartengage-elements-palette {
+    width: 250px;
+    background: #fff;
+    border-right: 1px solid #e5e5e5;
+    padding: 20px;
+    box-shadow: 1px 0 3px rgba(0,0,0,0.03);
+    z-index: 10;
+}
+
+.smartengage-elements-palette h3 {
+    margin-top: 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #23282d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.smartengage-element-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.smartengage-element-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    padding: 12px 8px;
+    cursor: move;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.smartengage-element-item:hover {
+    background: #f1f3f5;
+    border-color: #c8ced3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.07);
+    transform: translateY(-1px);
+}
+
+.smartengage-element-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+    font-size: 18px;
+    color: #0073aa;
+    background: #e8f4f9;
+    border-radius: 50%;
+}
+
+.smartengage-element-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+}
+
+.smartengage-help-text {
+    padding: 12px;
+    background: #f8f9fa;
+    border-left: 3px solid #0073aa;
+    border-radius: 0 4px 4px 0;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #555;
+}
+
+/* Builder canvas - enhanced for better usability */
+.smartengage-builder-canvas-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.smartengage-builder-toolbar {
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.smartengage-builder-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.smartengage-builder-actions button {
+    padding: 8px 14px;
+    height: auto;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+}
+
+.smartengage-builder-canvas {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e2e4e7;
+    border-radius: 6px;
+    position: relative;
+    min-height: 520px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.smartengage-canvas-dimensions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #666;
+    font-size: 13px;
+}
+
+.smartengage-canvas-dimensions span {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.smartengage-canvas-dimensions span i {
+    margin-right: 6px;
+    color: #0073aa;
+}
+
+/* Property panel - improved with modern controls */
+.smartengage-properties-panel {
+    width: 280px;
+    background: #fff;
+    border-left: 1px solid #e5e5e5;
+    padding: 20px;
+    box-shadow: -1px 0 3px rgba(0,0,0,0.03);
+    z-index: 10;
+}
+
+.smartengage-properties-panel h3 {
+    margin-top: 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #23282d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.property-group {
+    margin-bottom: 24px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.property-group h4 {
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+.smartengage-property-row {
+    margin-bottom: 14px;
+}
+
+.smartengage-property-row:last-child {
+    margin-bottom: 0;
+}
+
+.smartengage-property-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+}
+
+.smartengage-property-row input[type="text"],
+.smartengage-property-row input[type="number"],
+.smartengage-property-row select {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    height: auto;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+    transition: border-color 0.15s ease-in-out;
+}
+
+.smartengage-property-row input[type="text"]:focus,
+.smartengage-property-row input[type="number"]:focus,
+.smartengage-property-row select:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    outline: none;
+}
+
+.smartengage-property-row .wp-color-result {
+    margin-bottom: 0;
+    border-radius: 4px;
+    height: 30px;
+}
+
+.smartengage-image-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.smartengage-image-input-group input {
+    flex: 1;
+}
+
+.smartengage-image-input-group button {
+    height: auto;
+    white-space: nowrap;
+}
+
+/* No element selected message */
+.smartengage-no-element-selected {
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 6px;
+    color: #666;
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Builder elements - enhanced styling */
+.builder-element {
+    position: absolute;
+    border: 1px dashed transparent;
+    min-width: 20px;
+    min-height: 20px;
+    z-index: 1;
+    border-radius: 3px;
+    transition: border-color 0.2s ease;
+}
+
+.builder-element:hover {
+    border-color: #ddd;
+}
+
+.builder-element.selected {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    z-index: 2;
+}
+
+/* Styles for specific elements */
+.element-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.3;
+}
+
+.element-text {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.element-button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: #0073aa;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.element-button:hover {
+    background: #005f8b;
+}
+
+.element-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.element-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 245, 245, 0.9);
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+}
+
+.element-divider {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 10px 0;
+}
+
+.element-spacer {
+    background: transparent;
+}
+
+.element-spacer .spacer-inner {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 3px;
+}
+
+/* Delete element button */
+#smartengage-delete-element {
+    background-color: #f54545;
+    color: white;
+    border-color: #d43c3c;
+    width: 100%;
+    margin-top: 10px;
+    transition: background 0.2s ease;
+}
+
+#smartengage-delete-element:hover {
+    background-color: #d43c3c;
+}
+
+/* Responsive design */
+@media (max-width: 1400px) {
+    .smartengage-builder-wrap {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .smartengage-elements-palette,
+    .smartengage-properties-panel {
+        width: 100%;
+        border: 1px solid #e2e4e7;
+        border-radius: 6px;
+        margin: 0 0 20px 0;
+    }
+    
+    .smartengage-builder-canvas {
+        min-height: 400px;
+    }
+    
+    .smartengage-element-items {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 782px) {
+    .smartengage-element-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Preview styling - enhanced for modern look */
+#smartengage-preview-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+}
+
+#smartengage-preview-container .smartengage-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 999998;
+    animation: fadeIn 0.3s ease;
+}
+
+#smartengage-preview-container .smartengage-popup-preview {
+    position: fixed;
+    z-index: 999999;
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    max-width: 600px;
+    overflow: hidden;
+    opacity: 0;
+    transform: scale(0.9);
+    animation: popupIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popupIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#smartengage-preview-container .smartengage-popup-preview.type-slide-in.position-bottom-right {
+    right: 30px;
+    bottom: 30px;
+    animation: slideInRight 0.4s ease forwards;
+}
+
+#smartengage-preview-container .smartengage-popup-preview.type-slide-in.position-bottom-left {
+    left: 30px;
+    bottom: 30px;
+    animation: slideInLeft 0.4s ease forwards;
+}
+
+#smartengage-preview-container .smartengage-popup-preview.type-slide-in.position-center {
+    left: 50%;
+    bottom: 30px;
+    transform: translateX(-50%) scale(0.9);
+    animation: slideInBottom 0.4s ease forwards;
+}
+
+@keyframes slideInRight {
+    from { 
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from { 
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInBottom {
+    from { 
+        opacity: 0;
+        transform: translateX(-50%) translateY(50px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+#smartengage-preview-container .smartengage-popup-preview.type-full-screen {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 600px;
+    animation: popupIn 0.4s ease forwards;
+}
+
+#smartengage-preview-container .smartengage-popup-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+}
+
+#smartengage-preview-container .smartengage-popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 5;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+#smartengage-preview-container .smartengage-popup-close:hover {
+    background: #f1f1f1;
+    color: #333;
+}
