@@ -452,6 +452,38 @@
   justify-content: center;
   padding: 40px;
   overflow: auto;
+  background-color: var(--se-gray-100);
+  background-image: 
+    linear-gradient(rgba(130, 130, 130, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130, 130, 130, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: center center;
+  position: relative;
+}
+
+/* Add gradient overlays to indicate scroll areas */
+.smartengage-canvas-wrapper:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(243, 244, 246, 0.9), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.smartengage-canvas-wrapper:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to top, rgba(243, 244, 246, 0.9), transparent);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .smartengage-canvas {
@@ -459,10 +491,51 @@
   height: 450px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: var(--se-shadow-md);
+  box-shadow: var(--se-shadow-lg);
   position: relative;
   overflow: hidden;
   transition: var(--se-transition);
+}
+
+/* Canvas zoom controls */
+.smartengage-canvas-controls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  background: white;
+  border-radius: 30px;
+  box-shadow: var(--se-shadow);
+  padding: 6px 12px;
+  z-index: 10;
+}
+
+.smartengage-canvas-controls button {
+  background: transparent;
+  border: none;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  color: var(--se-gray-700);
+  transition: all 0.2s ease;
+}
+
+.smartengage-canvas-controls button:hover {
+  background: var(--se-gray-100);
+  color: var(--se-gray-900);
+}
+
+.smartengage-canvas-controls .zoom-level {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  color: var(--se-gray-700);
+  font-size: 14px;
 }
 
 .smartengage-canvas.mobile {
@@ -475,7 +548,7 @@
   height: 1024px;
 }
 
-/* Builder Elements */
+/* Builder Elements - Enhanced with more Squarespace-like styling */
 .builder-element {
   position: absolute;
   cursor: move;
@@ -484,6 +557,39 @@
   min-width: 30px;
   min-height: 30px;
   transition: var(--se-transition);
+  user-select: none;
+}
+
+/* Add subtle guides when elements are being moved */
+.builder-element:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: rgba(67, 97, 238, 0.2);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.builder-element:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(67, 97, 238, 0.2);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.builder-element.ui-draggable-dragging:before,
+.builder-element.ui-draggable-dragging:after {
+  opacity: 1;
 }
 
 .builder-element:hover {
@@ -492,20 +598,35 @@
 
 .builder-element.selected {
   border-color: var(--se-primary);
-  box-shadow: 0 0 0 2px var(--se-primary-light);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+/* Add animation for selection state */
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4); }
+  70% { box-shadow: 0 0 0 4px rgba(67, 97, 238, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+}
+
+.builder-element.just-added {
+  animation: pulse-border 1s ease-out;
 }
 
 .builder-element-controls {
   position: absolute;
-  right: -40px;
+  right: -44px;
   top: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   visibility: hidden;
   opacity: 0;
   transform: translateX(-10px);
-  transition: var(--se-transition);
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  background: white;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 .builder-element.selected .builder-element-controls {
@@ -798,7 +919,7 @@
   visibility: visible;
 }
 
-/* Drag and drop styles */
+/* Enhanced drag and drop styles */
 .ui-resizable-handle {
   position: absolute;
   width: 8px;
@@ -806,6 +927,63 @@
   background-color: var(--se-primary);
   border: 1px solid white;
   border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.ui-resizable-handle:hover {
+  transform: scale(1.3);
+  background-color: var(--se-primary-dark);
+}
+
+/* Show grid when dragging - Squarespace style */
+.smartengage-canvas.show-grid {
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(67, 97, 238, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(67, 97, 238, 0.05) 1px, transparent 1px);
+}
+
+/* Element states */
+.builder-element.being-dragged {
+  opacity: 0.8;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.builder-element.being-resized {
+  outline: 1px dashed var(--se-primary);
+}
+
+.builder-element.editing-content {
+  outline: 2px solid var(--se-primary);
+  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+}
+
+/* Position and size tooltips */
+.smartengage-position-tooltip,
+.smartengage-size-tooltip {
+  position: absolute;
+  background: var(--se-gray-800);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: var(--se-font-sans);
+  z-index: 9999;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Pulse highlight effect for canvas drop area */
+.smartengage-canvas-wrapper.pulse-highlight {
+  animation: pulse-canvas 2s infinite;
+}
+
+@keyframes pulse-canvas {
+  0% { background-color: var(--se-gray-100); }
+  50% { background-color: rgba(67, 97, 238, 0.05); }
+  100% { background-color: var(--se-gray-100); }
 }
 
 .ui-resizable-n {

@@ -243,14 +243,46 @@
          * Make canvas droppable
          */
         setupCanvasDroppable() {
+            // Enhanced dropzone with visual indicators and improved UX
             this.$canvas.droppable({
                 accept: '.smartengage-element',
-                drop: (event, ui) => this.handleElementDrop(event, ui)
+                drop: (event, ui) => this.handleElementDrop(event, ui),
+                over: (event, ui) => {
+                    // Add a visual cue when dragging over canvas
+                    this.$canvas.addClass('drag-over');
+                    
+                    // Show a helpful drop indicator
+                    if (!$('.smartengage-drop-indicator').length) {
+                        const $indicator = $('<div>', {
+                            class: 'smartengage-drop-indicator',
+                            css: {
+                                width: '100px',
+                                height: '50px',
+                                left: (ui.position.left - this.$canvas.offset().left) + 'px',
+                                top: (ui.position.top - this.$canvas.offset().top) + 'px'
+                            }
+                        });
+                        this.$canvas.append($indicator);
+                    } else {
+                        $('.smartengage-drop-indicator').css({
+                            left: (ui.position.left - this.$canvas.offset().left) + 'px',
+                            top: (ui.position.top - this.$canvas.offset().top) + 'px'
+                        });
+                    }
+                },
+                out: (event, ui) => {
+                    // Remove visual cues when dragging out
+                    this.$canvas.removeClass('drag-over');
+                    $('.smartengage-drop-indicator').remove();
+                }
             });
+            
+            // Initialize zoom functionality
+            this.setupCanvasZoom();
         }
         
         /**
-         * Setup element palette items
+         * Setup element palette items with enhanced drag-and-drop
          */
         setupElementPalette() {
             $('.smartengage-element').draggable({
@@ -258,9 +290,82 @@
                 appendTo: 'body',
                 revert: 'invalid',
                 zIndex: 1000,
-                opacity: 0.7,
-                containment: 'window'
+                opacity: 0.85,
+                containment: 'window',
+                start: (event, ui) => {
+                    // Add visual effects when dragging starts
+                    $(ui.helper).addClass('element-being-dragged');
+                    this.$canvas.addClass('awaiting-drop');
+                    
+                    // Add pulsing animation to the canvas
+                    $('.smartengage-canvas-wrapper').addClass('pulse-highlight');
+                },
+                stop: (event, ui) => {
+                    // Clean up visual effects
+                    this.$canvas.removeClass('awaiting-drop');
+                    $('.smartengage-canvas-wrapper').removeClass('pulse-highlight');
+                    $('.smartengage-drop-indicator').remove();
+                }
             });
+        }
+        
+        /**
+         * Setup canvas zoom functionality
+         */
+        setupCanvasZoom() {
+            let zoomLevel = 100; // percentage
+            const $zoomLevel = $('.zoom-level');
+            const $canvas = this.$canvas;
+            const $wrapper = $('.smartengage-canvas-wrapper');
+            
+            // Zoom in button
+            $('.zoom-in-btn').on('click', () => {
+                if (zoomLevel < 200) {
+                    zoomLevel += 10;
+                    updateZoom();
+                }
+            });
+            
+            // Zoom out button
+            $('.zoom-out-btn').on('click', () => {
+                if (zoomLevel > 50) {
+                    zoomLevel -= 10;
+                    updateZoom();
+                }
+            });
+            
+            // Reset zoom button
+            $('.zoom-reset-btn').on('click', () => {
+                zoomLevel = 100;
+                updateZoom();
+            });
+            
+            // Mouse wheel zoom
+            $wrapper.on('wheel', (e) => {
+                if (e.originalEvent.ctrlKey) {
+                    e.preventDefault();
+                    
+                    if (e.originalEvent.deltaY < 0 && zoomLevel < 200) {
+                        // Scroll up - zoom in
+                        zoomLevel += 5;
+                    } else if (e.originalEvent.deltaY > 0 && zoomLevel > 50) {
+                        // Scroll down - zoom out
+                        zoomLevel -= 5;
+                    }
+                    
+                    updateZoom();
+                }
+            });
+            
+            // Update zoom function
+            const updateZoom = () => {
+                const scale = zoomLevel / 100;
+                $canvas.css({
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center'
+                });
+                $zoomLevel.text(zoomLevel + '%');
+            };
         }
         
         /**
@@ -429,28 +534,132 @@
                     height: elementData.size.height + 'px'
                 });
                 
-                // Add to canvas
+                // Add to canvas with animation effect - more Squarespace-like
                 this.$canvas.append($element);
+                $element.hide().fadeIn(300).addClass('just-added');
+                setTimeout(() => {
+                    $element.removeClass('just-added');
+                }, 1000);
                 
-                // Make element draggable
+                // Make element selectable and editable
+                $element.on('click', (e) => {
+                    e.stopPropagation();
+                    this.selectElement($element[0]);
+                });
+                
+                // Add direct inline text editing for applicable elements
+                if (['heading', 'text', 'button'].includes(elementType)) {
+                    $element.on('dblclick', (e) => {
+                        e.stopPropagation();
+                        
+                        // Highlight the editing state
+                        $element.addClass('editing-content');
+                        
+                        // Make element editable
+                        $element.attr('contenteditable', true).focus();
+                        document.execCommand('selectAll', false, null);
+                        
+                        const originalText = $element.text();
+                        
+                        // Handle completing the edit
+                        const finishEdit = () => {
+                            $element.attr('contenteditable', false);
+                            $element.removeClass('editing-content');
+                            const newText = $element.text();
+                            
+                            if (newText !== originalText) {
+                                // Update element data
+                                const elementId = $element.attr('id');
+                                const element = this.findElementById(elementId);
+                                
+                                if (element) {
+                                    element.content = newText;
+                                    this.updatePopupJson();
+                                    
+                                    // Also update the property panel if this element is selected
+                                    if (this.selectedElement && $(this.selectedElement).attr('id') === elementId) {
+                                        $('#element-text-content').val(newText);
+                                    }
+                                }
+                            }
+                        };
+                        
+                        // Save on blur or Enter
+                        $element.on('blur.contentEdit', finishEdit);
+                        $element.on('keydown.contentEdit', (e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                finishEdit();
+                                $element.off('.contentEdit');
+                            } else if (e.key === 'Escape') {
+                                e.preventDefault();
+                                $element.text(originalText);
+                                finishEdit();
+                                $element.off('.contentEdit');
+                            }
+                        });
+                    });
+                }
+                
+                // Make element draggable with enhanced visual feedback
                 $element.draggable({
                     containment: 'parent',
                     handle: '.move',
-                    start: () => {
+                    cursor: 'move',
+                    opacity: 0.9,
+                    zIndex: 100,
+                    start: (event, ui) => {
+                        // Visual feedback that element is being moved
+                        $element.addClass('being-dragged');
                         this.selectElement($element[0]);
+                        
+                        // Show alignment guides/grid
+                        this.$canvas.addClass('show-grid');
+                        
+                        // Create position tooltip if it doesn't exist
+                        if (!$('#position-tooltip').length) {
+                            $('body').append('<div id="position-tooltip" class="smartengage-position-tooltip"></div>');
+                        }
+                    },
+                    drag: (event, ui) => {
+                        // Real-time position display
+                        $('#position-tooltip').html(`X: ${Math.round(ui.position.left)}px, Y: ${Math.round(ui.position.top)}px`).css({
+                            left: event.pageX + 10,
+                            top: event.pageY + 10
+                        });
+                        
+                        // Update position inputs in real-time
+                        $('#element-left').val(Math.round(ui.position.left));
+                        $('#element-top').val(Math.round(ui.position.top));
                     },
                     stop: (event, ui) => {
+                        // Clean up visual effects
+                        $element.removeClass('being-dragged');
+                        this.$canvas.removeClass('show-grid');
+                        $('#position-tooltip').remove();
+                        
+                        // Snap to grid for precise positioning (optional)
+                        const gridSize = 5; // 5px grid
+                        const snappedLeft = Math.round(ui.position.left / gridSize) * gridSize;
+                        const snappedTop = Math.round(ui.position.top / gridSize) * gridSize;
+                        
                         // Update position in data
                         const elementId = $(ui.helper).attr('id');
                         const element = this.findElementById(elementId);
                         
                         if (element) {
-                            element.position.left = ui.position.left;
-                            element.position.top = ui.position.top;
+                            // Apply snapped position
+                            $element.css({
+                                left: snappedLeft + 'px',
+                                top: snappedTop + 'px'
+                            });
+                            
+                            element.position.left = snappedLeft;
+                            element.position.top = snappedTop;
                             
                             // Update position inputs
-                            $('#element-left').val(ui.position.left);
-                            $('#element-top').val(ui.position.top);
+                            $('#element-left').val(snappedLeft);
+                            $('#element-top').val(snappedTop);
                             
                             // Update JSON
                             this.updatePopupJson();
@@ -458,18 +667,41 @@
                     }
                 });
                 
-                // Make element resizable
+                // Make element resizable with enhanced visual feedback
                 $element.resizable({
                     containment: 'parent',
                     handles: 'all',
                     minWidth: 20,
                     minHeight: 20,
+                    classes: {
+                        "ui-resizable-handle": "smartengage-resize-handle"
+                    },
+                    start: (event, ui) => {
+                        // Visual feedback
+                        $element.addClass('being-resized');
+                        this.selectElement($element[0]);
+                        
+                        // Create size tooltip if it doesn't exist
+                        if (!$('#size-tooltip').length) {
+                            $('body').append('<div id="size-tooltip" class="smartengage-size-tooltip"></div>');
+                        }
+                    },
                     resize: (event, ui) => {
+                        // Real-time size display
+                        $('#size-tooltip').html(`W: ${Math.round(ui.size.width)}px, H: ${Math.round(ui.size.height)}px`).css({
+                            left: event.pageX + 10,
+                            top: event.pageY + 10
+                        });
+                        
                         // Update size inputs in real-time
-                        $('#element-width').val(ui.size.width);
-                        $('#element-height').val(ui.size.height);
+                        $('#element-width').val(Math.round(ui.size.width));
+                        $('#element-height').val(Math.round(ui.size.height));
                     },
                     stop: (event, ui) => {
+                        // Clean up visual effects
+                        $element.removeClass('being-resized');
+                        $('#size-tooltip').remove();
+                        
                         // Update size in data
                         const elementId = $(ui.helper).attr('id');
                         const element = this.findElementById(elementId);
@@ -873,6 +1105,42 @@
          */
         updatePopupJson() {
             $('#popup_design_json').val(JSON.stringify(this.elements));
+        }
+        
+        /**
+         * Show position feedback when moving elements
+         * 
+         * @param {number} x The X position
+         * @param {number} y The Y position
+         */
+        showPositionFeedback(x, y) {
+            // Update tooltip if it exists
+            $('#position-tooltip').html(`X: ${Math.round(x)}px, Y: ${Math.round(y)}px`);
+        }
+        
+        /**
+         * Hide position feedback
+         */
+        hidePositionFeedback() {
+            $('#position-tooltip').remove();
+        }
+        
+        /**
+         * Show size feedback when resizing elements
+         * 
+         * @param {number} width The width
+         * @param {number} height The height
+         */
+        showSizeFeedback(width, height) {
+            // Update tooltip if it exists
+            $('#size-tooltip').html(`W: ${Math.round(width)}px, H: ${Math.round(height)}px`);
+        }
+        
+        /**
+         * Hide size feedback
+         */
+        hideSizeFeedback() {
+            $('#size-tooltip').remove();
         }
         
         /**

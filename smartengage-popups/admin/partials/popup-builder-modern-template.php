@@ -429,6 +429,33 @@ $popup_theme = get_post_meta( $post->ID, '_popup_theme', true ) ?: 'default';
                 </div>
                 <div class="smartengage-canvas-wrapper">
                     <div id="smartengage-builder-canvas" class="smartengage-canvas"></div>
+                    
+                    <!-- Canvas Zoom Controls -->
+                    <div class="smartengage-canvas-controls">
+                        <button type="button" class="zoom-out-btn" title="<?php esc_attr_e( 'Zoom Out', 'smartengage-popups' ); ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                        </button>
+                        <div class="zoom-level">100%</div>
+                        <button type="button" class="zoom-in-btn" title="<?php esc_attr_e( 'Zoom In', 'smartengage-popups' ); ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                <line x1="11" y1="8" x2="11" y2="14"></line>
+                                <line x1="8" y1="11" x2="14" y2="11"></line>
+                            </svg>
+                        </button>
+                        <button type="button" class="zoom-reset-btn" title="<?php esc_attr_e( 'Reset Zoom', 'smartengage-popups' ); ?>">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"></path>
+                                <path d="M10 8l-4 4 4 4"></path>
+                                <path d="M14 8l4 4-4 4"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
             
