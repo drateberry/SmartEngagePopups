@@ -1034,6 +1034,14 @@
         </div>
     </div>
 
+    <!-- Hidden fields for saving data -->
+    <form id="post" style="display: none;">
+        <input type="hidden" name="popup_design_json" id="popup_design_json" value="">
+        <input type="hidden" name="popup_type" id="popup_type" value="slide-in">
+        <input type="hidden" name="popup_position" id="popup_position" value="bottom-right">
+        <input type="hidden" name="popup_theme" id="popup_theme" value="default">
+    </form>
+
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -1118,6 +1126,18 @@
                     if (confirm('Are you sure you want to reset the design? All changes will be lost.')) {
                         this.resetDesign();
                     }
+                });
+                
+                // Save button
+                $('#smartengage-save-design').on('click', () => {
+                    this.savePopupDesign();
+                });
+                
+                // Preview button
+                $('#smartengage-preview-design').on('click', () => {
+                    // For demo purposes, just show a modal with current design
+                    this.updatePopupJson();
+                    alert('Preview functionality would be implemented in full version.');
                 });
             }
             
@@ -1657,6 +1677,9 @@
                 this.elements = [];
                 this.deselectElement();
                 
+                // Clear the JSON data
+                $('#popup_design_json').val('');
+                
                 // Add welcome message
                 this.$canvas.append(`
                     <div class="welcome-message">
@@ -1665,6 +1688,66 @@
                         <div class="element-arrow"></div>
                     </div>
                 `);
+            }
+            
+            /**
+             * Update the popup JSON data
+             */
+            updatePopupJson() {
+                $('#popup_design_json').val(JSON.stringify(this.elements));
+                console.log('Saving popup design:', this.elements);
+            }
+            
+            /**
+             * Load the popup design from JSON
+             */
+            loadPopupDesign() {
+                const designJson = $('#popup_design_json').val();
+                
+                if (!designJson) return;
+                
+                try {
+                    // Parse the JSON design data
+                    const elements = JSON.parse(designJson);
+                    
+                    if (!Array.isArray(elements) || elements.length === 0) return;
+                    
+                    // Clear the canvas
+                    this.$canvas.empty();
+                    this.elements = [];
+                    
+                    // Create each element
+                    elements.forEach(element => {
+                        this.recreateElementFromData(element);
+                    });
+                    
+                    console.log('Loaded popup design with', elements.length, 'elements');
+                } catch (error) {
+                    console.error('Error loading popup design:', error);
+                }
+            }
+            
+            /**
+             * Recreate an element from saved data
+             */
+            recreateElementFromData(element) {
+                // Code to recreate elements would go here in the full implementation
+                // This is a simplified version for the demo
+                this.elements.push(element);
+            }
+            
+            /**
+             * Save the popup design
+             */
+            savePopupDesign() {
+                // Update JSON data
+                this.updatePopupJson();
+                
+                // In a real WordPress environment, this would submit the form
+                // For our demo, we'll just show a success message
+                alert('Popup design saved! JSON data stored in hidden field.');
+                
+                console.log('Saved design JSON:', $('#popup_design_json').val());
             }
             
             /**
