@@ -44,6 +44,23 @@
   overflow: hidden;
   box-shadow: var(--se-shadow-md);
   position: relative;
+  z-index: 100; /* Ensure higher than WordPress admin footer */
+}
+
+/* WordPress admin UI fixes */
+body.post-type-smartengage_popup #wpfooter {
+  z-index: 9; /* Lower z-index than our builder */
+  position: relative;
+}
+
+/* Add extra padding at bottom to prevent overlap with footer */
+body.post-type-smartengage_popup #wpbody-content {
+  padding-bottom: 120px;
+}
+
+/* When builder is active, ensure proper stacking context */
+body.post-type-smartengage_popup {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 /* Modern Builder Layout */
@@ -495,6 +512,7 @@
   position: relative;
   overflow: hidden;
   transition: var(--se-transition);
+  z-index: 10; /* Ensure it sits above other elements on the page */
 }
 
 /* Canvas zoom controls */
@@ -895,6 +913,45 @@
   position: relative;
 }
 
+/* Auto-save feedback styles */
+.smartengage-builder-button.saving:after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 8px;
+  animation: saving-spinner 0.8s linear infinite;
+}
+
+.smartengage-builder-button.saved:after {
+  content: "✓";
+  margin-left: 8px;
+  display: inline-block;
+  color: var(--se-success);
+  animation: fade-in 0.3s ease;
+}
+
+.smartengage-builder-button.save-error:after {
+  content: "!";
+  margin-left: 8px;
+  display: inline-block;
+  color: var(--se-danger);
+  animation: fade-in 0.3s ease;
+}
+
+@keyframes saving-spinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .smartengage-tooltip::before {
   content: attr(data-tooltip);
   position: absolute;
@@ -1148,4 +1205,79 @@
   width: 100%;
   height: 100%;
   border: none;
+}
+/* Notification system */
+.smartengage-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  z-index: 999999; /* Ensure notifications are above all WordPress elements */
+  font-family: var(--se-font-sans);
+}
+
+.smartengage-notification.success {
+  background: #ecfdf5;
+  border-left: 4px solid #10b981;
+  color: #064e3b;
+}
+
+.smartengage-notification.error {
+  background: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #7f1d1d;
+}
+
+.smartengage-notification.warning {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  color: #78350f;
+}
+
+.smartengage-notification.info {
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  color: #1e40af;
+}
+
+.smartengage-notification-content {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.smartengage-notification-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.smartengage-notification-close:hover {
+  opacity: 1;
+}
+
+/* Fix for WordPress admin footer overlap issue */
+#wpfooter {
+  z-index: -1 !important; /* Send the footer behind our builder */
+}
+
+.smartengage-builder-container {
+  z-index: 100; /* Ensure our builder is above other admin elements */
+}
+
+.smartengage-builder-wrapper {
+  z-index: 100; /* Ensure wrapper elements are also above admin elements */
 }

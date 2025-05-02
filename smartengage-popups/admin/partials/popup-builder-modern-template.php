@@ -19,6 +19,7 @@ $popup_theme = get_post_meta( $post->ID, '_popup_theme', true ) ?: 'default';
 ?>
 
 <div class="smartengage-builder-container">
+    <input type="hidden" id="smartengage_builder_nonce" name="smartengage_builder_nonce" value="<?php echo esc_attr(wp_create_nonce('smartengage_builder_nonce')); ?>">
     <div class="smartengage-builder-wrapper">
         <!-- Main Header -->
         <div class="smartengage-builder-header">

@@ -1062,6 +1062,91 @@
             
             // Update the JSON data
             this.updatePopupJson();
+            
+            // Schedule an auto-save after changes
+            this.scheduleAutoSave();
+        }
+        
+        /**
+         * Schedule an auto-save after a delay
+         */
+        scheduleAutoSave() {
+            // Clear any existing timeout
+            if (this.autoSaveTimeout) {
+                clearTimeout(this.autoSaveTimeout);
+            }
+            
+            // Schedule a new auto-save
+            this.autoSaveTimeout = setTimeout(() => {
+                // Only auto-save if we're in WordPress and have an existing post
+                const popupId = $('#post_ID').val();
+                if (typeof ajaxurl !== 'undefined' && popupId) {
+                    this.autoSave();
+                }
+            }, 3000); // Auto-save after 3 seconds of inactivity
+        }
+        
+        /**
+         * Auto-save the current design
+         */
+        autoSave() {
+            // Only proceed if we have ajax and a post ID
+            if (typeof ajaxurl === 'undefined' || !$('#post_ID').val()) {
+                return;
+            }
+            
+            // Update JSON one final time
+            this.updatePopupJson();
+            
+            // Current design data
+            const designData = $('#popup_design_json').val();
+            const popupId = $('#post_ID').val();
+            
+            // Check if there's anything to save
+            if (!designData || !popupId) {
+                return;
+            }
+            
+            // Don't auto-save if there are no changes
+            if (designData === this.lastSavedData) {
+                return;
+            }
+            
+            // Show a subtle saving indicator
+            const $saveButton = $('#smartengage-save-design');
+            $saveButton.addClass('saving');
+            
+            // AJAX save
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'smartengage_save_popup_design',
+                    popup_id: popupId,
+                    design_data: designData,
+                    nonce: $('#smartengage_builder_nonce').val(),
+                    is_autosave: true
+                },
+                success: (response) => {
+                    if (response.success) {
+                        // Subtle indication of successful save
+                        $saveButton.removeClass('saving').addClass('saved');
+                        setTimeout(() => {
+                            $saveButton.removeClass('saved');
+                        }, 2000);
+                        
+                        // Update last saved state
+                        this.lastSavedData = designData;
+                    }
+                },
+                error: () => {
+                    // Show subtle error indicator
+                    $saveButton.removeClass('saving').addClass('save-error');
+                    setTimeout(() => {
+                        $saveButton.removeClass('save-error');
+                    }, 2000);
+                }
+            });
         }
         
         /**
@@ -1359,8 +1444,110 @@
             // Update JSON one final time
             this.updatePopupJson();
             
-            // Submit the form
-            $('#post').submit();
+            // First, save via AJAX for instant feedback without page reload
+            const designData = $('#popup_design_json').val();
+            const popupId = $('#post_ID').val();
+            
+            if (!popupId) {
+                // If no post ID yet, use standard form submission
+                $('#post').submit();
+                return;
+            }
+            
+            // Show saving indicator
+            const $saveButton = $('#smartengage-save-design');
+            const originalText = $saveButton.text();
+            $saveButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+            
+            // AJAX save
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'smartengage_save_popup_design',
+                    popup_id: popupId,
+                    design_data: designData,
+                    nonce: $('#smartengage_builder_nonce').val()
+                },
+                success: (response) => {
+                    if (response.success) {
+                        // Show success message
+                        this.showNotification('success', response.data.message);
+                        
+                        // Also update the hidden field for consistency
+                        $('#popup_design_json').val(designData);
+                        
+                        // Update last saved state for change tracking
+                        this.lastSavedState = JSON.stringify(this.elements);
+                    } else {
+                        // Show error message
+                        this.showNotification('error', response.data.message || 'Error saving popup design');
+                        console.error('Save error:', response.data);
+                        
+                        // Fallback to standard form submission
+                        if (confirm('There was an issue with the quick save. Would you like to save using the standard method? (Page will reload)')) {
+                            $('#post').submit();
+                        }
+                    }
+                },
+                error: (xhr, status, error) => {
+                    // Show error message
+                    this.showNotification('error', 'Error connecting to server. Please try again.');
+                    console.error('Save error:', xhr, status, error);
+                    
+                    // Fallback to standard form submission
+                    if (confirm('There was an issue connecting to the server. Would you like to save using the standard method? (Page will reload)')) {
+                        $('#post').submit();
+                    }
+                },
+                complete: () => {
+                    // Reset button state
+                    $saveButton.prop('disabled', false).text(originalText);
+                }
+            });
+        }
+        
+        /**
+         * Show a notification message
+         * 
+         * @param {string} type The notification type ('success', 'error', 'warning', 'info')
+         * @param {string} message The message to display
+         */
+        showNotification(type, message) {
+            // Remove any existing notifications
+            $('.smartengage-notification').remove();
+            
+            // Create notification element
+            const $notification = $('<div>', {
+                class: `smartengage-notification ${type}`,
+                html: `<div class="smartengage-notification-content">${message}</div>
+                       <button class="smartengage-notification-close">&times;</button>`,
+                css: {
+                    opacity: 0
+                }
+            });
+            
+            // Add to page
+            $('body').append($notification);
+            
+            // Animate in
+            $notification.animate({ opacity: 1 }, 300);
+            
+            // Add close button handler
+            $notification.find('.smartengage-notification-close').on('click', function() {
+                $(this).closest('.smartengage-notification').animate({ opacity: 0 }, 300, function() {
+                    $(this).remove();
+                });
+            });
+            
+            // Auto dismiss after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    $notification.animate({ opacity: 0 }, 300, function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+            }
         }
         
         /**
