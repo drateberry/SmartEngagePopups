@@ -1,0 +1,77 @@
+Create a full-featured WordPress plugin named “SmartEngage Popups” that enables WordPress site owners to design and deploy intelligent, behavior-based popups. This plugin should support two popup types:
+	•	Slide-in Popups (bottom-right, bottom-left, or center)
+	•	Full-screen Overlays
+
+Each popup can contain:
+	•	A title
+	•	Body text
+	•	An image (optional)
+	•	Optional CTA button(s)
+
+Plugin Features:
+
+✅ Popup Builder Interface (WP Admin)
+	•	Custom post type: smartengage_popup
+	•	Meta box or custom Gutenberg block to:
+	•	Set title, text, and image
+	•	Choose layout (slide-in vs full-screen)
+	•	Configure button text + link
+	•	Choose popup position (for slide-ins)
+	•	Upload image
+	•	Enable/disable popup
+
+🎯 Trigger Conditions
+
+Popups can be triggered based on:
+	•	Number of page views per user (use cookies or localStorage)
+	•	Time on page (X seconds)
+	•	Scroll depth (e.g. 30%, 60%, 90%)
+	•	Exit intent detection
+	•	Specific URL paths or post types
+	•	Logged-in vs logged-out users
+
+Allow site owners to combine multiple conditions using AND/OR logic.
+
+🔁 Frequency Rules
+	•	Show once per session
+	•	Show every X days
+	•	Show every page load
+	•	Limit popup to max X impressions per user
+
+🧠 Targeting Options
+	•	Device type (desktop vs mobile)
+	•	Referrer URL (e.g., only show to users coming from Facebook)
+	•	Cookie-based targeting (e.g., show only if a certain cookie is present)
+	•	User role (admin, subscriber, etc.)
+
+📈 Analytics Dashboard
+	•	Track views, clicks, and conversion rates per popup
+	•	Store data in a custom table or use existing postmeta
+	•	Show sparkline graphs in admin dashboard
+
+💡 Exit Intent Detection
+	•	Implement with mouseleave event for desktop
+	•	For mobile, use scroll-up detection at page bottom as proxy
+
+🛠️ Front-End Implementation
+	•	Use minimal JS (enqueue it properly with wp_enqueue_script)
+	•	Popups should animate in smoothly (slide or fade)
+	•	Use ARIA and keyboard navigation for accessibility
+	•	Load CSS only when needed
+
+🔐 Code Quality
+	•	Follow WordPress plugin coding standards
+	•	Use nonces and sanitization on all form fields
+	•	Use admin_enqueue_scripts, add_meta_box, register_post_type, etc.
+	•	Namespace all functions or use class-based structure
+
+📦 Deliverables
+	•	smartengage-popups.php (main plugin file with header)
+	•	/admin/ folder for all admin panel code
+	•	/assets/ for JS and CSS
+	•	/includes/ for core logic
+	•	Fully localized (use __() and _e())
+
+⸻
+
+Make sure this plugin is installable via ZIP and fully functional out of the box. It should not depend on any third-party popup or marketing library. Use vanilla JS and PHP. Prioritize performance and a clean, intuitive admin experience.
