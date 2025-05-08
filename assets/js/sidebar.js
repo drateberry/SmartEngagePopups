@@ -23,12 +23,11 @@ const {
  */
 const SmartEngageSidebar = compose(
     withSelect( ( select ) => {
-        const { getEditedPostAttribute } = select( 'core/editor' );
-        const { getPostType } = select( 'core' );
+        const { getEditedPostAttribute, getCurrentPostType } = select( 'core/editor' );
         
         // Only show sidebar for our custom post type
-        const postType = getPostType( getEditedPostAttribute( 'type' ) );
-        const showSidebar = postType && postType.slug === 'smartengage_popup';
+        const postType = getCurrentPostType();
+        const showSidebar = postType === 'smartengage_popup';
         
         return {
             showSidebar,
@@ -41,14 +40,14 @@ const SmartEngageSidebar = compose(
             scrollDepth: select( 'core/editor' ).getEditedPostMeta()._smartengage_scroll_depth || 50,
             exitIntent: select( 'core/editor' ).getEditedPostMeta()._smartengage_exit_intent || 'disabled',
         };
-    } ),
+    }),
     withDispatch( ( dispatch ) => {
         return {
             updateMeta: ( key, value ) => {
-                dispatch( 'core/editor' ).editPost( { meta: { [key]: value } } );
+                dispatch( 'core/editor' ).editPost({ meta: { [key]: value } });
             }
         };
-    } )
+    })
 )( ( props ) => {
     // Don't render if not our post type
     if ( !props.showSidebar ) {
@@ -154,7 +153,12 @@ const SmartEngageSidebar = compose(
                         <Button
                             isPrimary
                             onClick={ () => {
-                                alert( __( 'Please save the popup to see a preview.', 'smartengage-popups' ) );
+                                // Use a safer preview method
+                                if (wp.data.select('core/editor').getEditedPostContent()) {
+                                    alert( __( 'Your popup settings are ready for preview. Please save the post first to see the preview.', 'smartengage-popups' ) );
+                                } else {
+                                    alert( __( 'Please add some content to your popup before previewing.', 'smartengage-popups' ) );
+                                }
                             } }
                         >
                             { __( 'Preview Popup', 'smartengage-popups' ) }
@@ -164,9 +168,26 @@ const SmartEngageSidebar = compose(
             </PluginSidebar>
         </>
     );
-} );
+});
+
+// Fix for FormData issue
+(function() {
+    // Check if we're in the editor
+    if (document.body.classList.contains('post-type-smartengage_popup') && document.body.classList.contains('block-editor-page')) {
+        // Override the FormData constructor to handle non-form elements gracefully
+        const originalFormData = window.FormData;
+        
+        window.FormData = function(form) {
+            if (form && !(form instanceof HTMLFormElement)) {
+                // If not a form element, create an empty FormData object
+                return new originalFormData();
+            }
+            return new originalFormData(form);
+        };
+    }
+})();
 
 // Register Gutenberg sidebar plugin
 registerPlugin( 'smartengage-sidebar', {
     render: SmartEngageSidebar,
-} );
+});

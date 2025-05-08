@@ -456,10 +456,39 @@ class SmartEngage_Metabox {
             },
         ) );
         
-        // Register other meta fields as needed
+        // Register other meta fields as needed for Gutenberg integration
+        register_meta( 'post', '_smartengage_time_on_page', array(
+            'show_in_rest'      => true,
+            'type'              => 'number',
+            'single'            => true,
+            'sanitize_callback' => 'absint',
+            'auth_callback'     => function() {
+                return current_user_can( 'edit_posts' );
+            },
+        ) );
+        
+        register_meta( 'post', '_smartengage_scroll_depth', array(
+            'show_in_rest'      => true,
+            'type'              => 'number',
+            'single'            => true,
+            'sanitize_callback' => 'absint',
+            'auth_callback'     => function() {
+                return current_user_can( 'edit_posts' );
+            },
+        ) );
+        
+        register_meta( 'post', '_smartengage_exit_intent', array(
+            'show_in_rest'      => true,
+            'type'              => 'string',
+            'single'            => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback'     => function() {
+                return current_user_can( 'edit_posts' );
+            },
+        ) );
     }
     
-    /**
+  /**
      * Enqueue block editor assets for Gutenberg
      */
     public function enqueue_block_editor_assets() {
@@ -477,4 +506,40 @@ class SmartEngage_Metabox {
             SMARTENGAGE_VERSION,
             true
         );
+        
+        // Add localized script data to help with potential issues
+        wp_localize_script(
+            'smartengage-sidebar',
+            'smartEngageEditor',
+            array(
+                'restUrl'    => rest_url(),
+                'nonce'      => wp_create_nonce( 'wp_rest' ),
+                'postType'   => 'smartengage_popup',
+                'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
+                'debug'      => defined( 'WP_DEBUG' ) && WP_DEBUG,
+                'strings'    => array(
+                    'savingError' => __( 'Error saving popup settings. Please try again.', 'smartengage-popups' ),
+                    'formDataError' => __( 'FormData error detected and fixed.', 'smartengage-popups' ),
+                ),
+            )
+        );
+        
+        // Add inline script to fix potential FormData issue
+        wp_add_inline_script( 
+            'smartengage-sidebar', 
+            'window.addEventListener("load", function() { 
+                if (typeof FormData !== "undefined") {
+                    var originalFormData = window.FormData;
+                    window.FormData = function(form) {
+                        if (form && !(form instanceof HTMLFormElement)) {
+                            console.warn("FormData received non-form element, creating empty FormData");
+                            return new originalFormData();
+                        }
+                        return new originalFormData(form);
+                    };
+                }
+            });',
+            'before'
+        );
     }
+}
