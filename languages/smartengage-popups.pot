@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SmartEngage Popups 1.0.0\n"
-"Report-Msgid-Bugs-To: https://github.com/drateberry/smartengage-popups\n"
+"Report-Msgid-Bugs-To: https://github.com/drateberry/SmartEngagePopups/issues\n"
 "Last-Translator: FULL NAME drate@convergecore.com\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"

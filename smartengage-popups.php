@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SmartEngage Popups
- * Plugin URI: https://github.com/drateberry/smartengage-popups
+ * Plugin URI: https://github.com/drateberry/SmartEngagePopups
  * Description: Create and manage behavior-triggered slide-in and full-screen popups with powerful targeting options.
  * Version: 1.0.0
  * Author: Drate Berry
